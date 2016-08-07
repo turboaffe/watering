@@ -11,3 +11,8 @@ Planned features:
 - GUI which shows humidity vs time
 - Database which saves humidity history
 - Temperature Sensors
+
+Prerequisites:
+
+- Timer library https://github.com/JChristensen/Timer
+
