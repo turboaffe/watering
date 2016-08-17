@@ -16,8 +16,8 @@ int i = 0;
 int low_pass = 50;
 bool pump_state = true;
 int humidity = 0;
-int on_time = 1000;
-int low_treshold = 500;
+int on_time = 1500;
+int low_treshold = 800;
 bool state = true;
 bool get_value = false;
 
@@ -38,14 +38,15 @@ void setup() {
   pinMode(2, OUTPUT);
   pinMode(5, OUTPUT);
 
+  analogReference(DEFAULT); 
+
+  read_eeprom_values();
+
   Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
 
   t.every(10000, run_water_algorithm);
 
-  read_eeprom_values();
+
   
 }
 
@@ -153,20 +154,24 @@ void loop() {
 
 void read_sensor(int* value)
 {
+    unsigned long mean_adc_value = 0;
+    
     // switch on sensor 
     digitalWrite(2, HIGH);
 
     // wait for things to stabilize
-    delay(5);
+    delay(2000);
 
     int i = 0;
     
     for(i = 0; i < low_pass; i++)
     {
-      *value += analogRead(sensorPin);
+      mean_adc_value += analogRead(sensorPin);
       delay(2);
     }
-    *value = *value / low_pass;
+    mean_adc_value = mean_adc_value / low_pass;
+
+    *value = mean_adc_value;
 
     // turn off sensor
     digitalWrite(2, LOW);
